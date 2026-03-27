@@ -91,8 +91,9 @@ El Attack Map de T-Pot mostró en tiempo real la geolocalización de cada atacan
 
 La presencia de **DICOM** —el protocolo estándar de imágenes médicas como radiografías y tomografías— entre los servicios escaneados es uno de los hallazgos más preocupantes del proyecto, ya que indica que actores maliciosos buscan activamente sistemas de salud mal configurados expuestos al Internet público.
 
-> ![Attack Map - Live Feed](screenshots/attack_map_livefeed.png)
-> ![Attack Map - Pico SIP](screenshots/attack_map_sip.png)
+> ![Attack Map - Live Feed](tpot-honeypot-lab/screenshots/attack_map_livefeed.png.png)>
+![Attack Map - Pico SIP](tpot-honeypot-lab/screenshots/attack_map_sip.gif)
+
 
 ---
 
@@ -113,7 +114,7 @@ Reputación:   Reputation Unknown (escáner automatizado)
 Período:      Observado en múltiples días — 08-03 al 12-03-2026
 ```
 
-> ![SSH Brute Force](screenshots/ssh_bruteforce_cowrie.png)
+> ![SSH Brute Force](tpot-honeypot-lab/screenshots/ssh_bruteforce_cowrie.png.png)
 
 ---
 
@@ -135,8 +136,8 @@ Eventos:      241,724 (solo esta IP durante el período observado)
 Período:      Activo desde el primer día — persistió los 5 días completos
 ```
 
-> ![SIP Flood - Sentrypeer](screenshots/sip_flood_sentrypeer.png)
-> ![tcpdump SIP](screenshots/tcpdump_sip_capture.png)
+> ![SIP Flood - Sentrypeer](tpot-honeypot-lab/screenshots/sip_flood_sentrypeer.png.png)
+> ![tcpdump SIP](tpot-honeypot-lab/screenshots/tcpdump_sip_capture.png.png)
 
 ---
 
@@ -154,7 +155,7 @@ Honeypot:     ElasticPot
 Patrón:       Escaneo multi-fuente sincronizado en el mismo timestamp exacto
 ```
 
-> ![Elasticsearch Scan](screenshots/elasticsearch_scan.png)
+> ![Elasticsearch Scan](tpot-honeypot-lab/screenshots/elasticsearch_scan.png.png)
 
 ---
 
@@ -169,7 +170,7 @@ Honeypot:     H0neytr4p
 Patrón:       Ráfagas de hasta 8 conexiones HTTPS simultáneas por segundo
 ```
 
-> ![HTTPS Scan](screenshots/https_scan_h0neytr4p.png)
+> ![HTTPS Scan](tpot-honeypot-lab/screenshots/https_scan_h0neytr4p.png.png)
 
 ---
 
@@ -195,7 +196,7 @@ sudo iptables -L DOCKER-USER -n -v
 
 La verificación confirmó **38 paquetes / 22,987 bytes** descartados en el momento de la captura. El comando `sudo ss -ntu | grep 51.38.144.6` confirmó que no existían conexiones activas — el bloqueo era completo.
 
-> ![iptables DOCKER-USER](screenshots/iptables_docker_user.png)
+> ![iptables DOCKER-USER](tpot-honeypot-lab/screenshots/iptables_docker_user.png.png)
 
 ---
 
@@ -224,7 +225,7 @@ El estado final confirmó: `51.38.144.6 → DENY`, `Puerto 5060 → DENY` (IPv4 
 
 > ⚠️ **Lección técnica clave:** Al aplicar `sudo ufw deny 5060`, `tcpdump` seguía mostrando paquetes SIP activos llegando al honeypot. Docker inyecta reglas en la cadena `PREROUTING` de `iptables` con precedencia sobre las reglas de `INPUT` donde opera `ufw`. La solución definitiva fue `DOCKER-USER`. En entornos Docker, **`ufw` y `DOCKER-USER` son complementarios, no equivalentes** — esto es una de las brechas de configuración más comunes en entornos de producción.
 
-> ![UFW Status](screenshots/ufw_firewall_rules.png)
+> ![UFW Status](tpot-honeypot-lab/screenshots/ufw_firewall_rules.png.png)
 
 ---
 
@@ -242,7 +243,7 @@ sudo tcpdump -i eth0 port 5060
 
 Las capturas confirmaron mensajes `SIP REGISTER` enviados desde múltiples puertos efímeros del bloque `ip6.ip-51-38-144.eu.*`, con el honeypot respondiendo `SIP/2.0 200 OK` —simulando un servidor SIP legítimo que acepta los registros, lo que mantenía al atacante activo y maximizaba la captura de datos de inteligencia.
 
-> ![tcpdump SIP](screenshots/tcpdump_sip_capture.png)
+> ![tcpdump SIP](tpot-honeypot-lab/screenshots/tcpdump_sip_capture.png.png)
 
 ---
 
@@ -289,7 +290,7 @@ El dashboard de T-Pot consolidó todos los datos y produjo las siguientes tablas
 
 La presencia de **CVE-2024-38816** con 69 detecciones es el hallazgo más significativo del IDS: siendo una vulnerabilidad publicada en 2024, su incorporación activa en herramientas automatizadas de ataque demuestra que la ventana entre la divulgación pública de un CVE y su explotación masiva se ha reducido a semanas o días.
 
-> ![Dashboard Suricata - Kibana](screenshots/suricata_dashboard.png)
+> ![Dashboard Suricata - Kibana](tpot-honeypot-lab/screenshots/suricata_dashboard.png.png)
 
 ---
 
@@ -323,37 +324,6 @@ La presencia de **CVE-2024-38816** con 69 detecciones es el hallazgo más signif
 
 ---
 
-## 📁 Estructura del Repositorio
-
-```
-tpot-honeypot-lab/
-│
-├── README.md                         # Este archivo
-│
-├── screenshots/                      # Capturas de pantalla del laboratorio
-│   ├── attack_map_livefeed.png       # T-Pot Attack Map con Live Feed activo
-│   ├── attack_map_sip.png            # Mapa durante el pico de ataque SIP
-│   ├── ssh_bruteforce_cowrie.png     # Campaña SSH desde 198.143.191.202
-│   ├── sip_flood_sentrypeer.png      # Flood SIP desde 51.38.144.6
-│   ├── elasticsearch_scan.png        # Escaneo coordinado puerto 9200
-│   ├── https_scan_h0neytr4p.png      # Scanning HTTPS desde Países Bajos
-│   ├── tcpdump_sip_capture.png       # Captura tcpdump de mensajes SIP REGISTER
-│   ├── iptables_docker_user.png      # Reglas DOCKER-USER con contadores activos
-│   ├── ufw_firewall_rules.png        # Estado UFW con reglas aplicadas
-│   └── suricata_dashboard.png        # Dashboard Kibana con top ASNs y CVEs
-│
-├── videos/                           # Grabaciones de pantalla de sesiones en vivo
-│   ├── sesion_monitoreo_01.mp4
-│   ├── sesion_monitoreo_02.mp4
-│   ├── mitigacion_iptables.mp4
-│   └── analisis_tcpdump.mp4
-│
-└── notas/
-    └── resumen_ataques.md            # Notas detalladas por campaña de ataque
-```
-
----
-
 ## ⚠️ Aviso Ético y Legal
 
 Este honeypot fue desplegado exclusivamente con fines de **investigación personal en ciberseguridad**. Todos los sistemas documentados son honeypots — no se involucró ningún sistema de producción real, datos de usuarios ni servicios de terceros. Las IPs de atacantes documentadas son direcciones públicas que iniciaron conexiones no solicitadas a un sistema de investigación monitoreado. La observación y documentación de este tráfico es completamente legal en el marco de un sistema propio expuesto al Internet público.
@@ -362,8 +332,9 @@ Este honeypot fue desplegado exclusivamente con fines de **investigación person
 
 ## 👥 Autores
 
-**Edyn Dominguez** — Proyecto Personal de Ciberseguridad · Marzo 2026
-**Enrique Jou** — Proyecto Personal de Ciberseguridad · Marzo 2026
+**Edyn Dominguez** — [@Edyndominguez](https://github.com/Edyndominguez)
+
+**Enrique Jou** — [@sacri89](https://github.com/sacri89)
 
 ---
 
